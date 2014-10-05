@@ -1,0 +1,5 @@
+default['slack-handler']['channel'] = '#chef'
+default['slack-handler']['token'] = 'token' 
+default['slack-handler']['team'] = 'ryuzee'
+default['slack-handler']['username'] = 'chef'
+default['slack-handler']['icon_emoj'] = ':chef:'
