@@ -1,0 +1,22 @@
+---
+driver:
+  name: docker 
+  socket: <%= ENV['DOCKER_HOST'] %>
+driver_config:
+  require_chef_omnibus: true
+busser:
+  sudo: true
+
+platforms:
+  - name: centos-6.4
+    driver_config:
+      image: ryuzee/centos_chef:6.4
+
+suites:
+- name: default
+  run_list: 
+    - "recipe[slack-handler::default]"
+  attributes:
+    slack-handler:
+      token: <%= ENV['SLACK_TOKEN'] %>
+      team: <%= ENV['SLACK_TEAM'] %>
