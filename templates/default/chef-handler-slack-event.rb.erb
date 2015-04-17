@@ -12,19 +12,22 @@ require 'json'
 class Chef
   class Handler
     class SlackEvent < Chef::Handler
-      attr_accessor :icon_emoj, :channel, :username, :slack_webhook_url
+      attr_accessor :icon_emoj, :channel, :username, :slack_webhook_url, :post_on_success
 
       def initialize(options ={})
         @channel = options[:channel] || "#chef"
         @username = options[:username] || "chef"
         @icon_emoji = options[:icon_emoji] || ":chef"
         @slack_webhook_url = options[:slack_webhook_url] || ""
+        @post_on_success = options[:post_on_success] || false
       end
 
       def report
         if run_status.success? then
           Chef::Log.info("Chef Execution Success on #{node.name}")
-          #return
+          unless @post_on_success
+            return
+          end
         end
         uri = URI(@slack_webhook_url)
         http = Net::HTTP.new(uri.host, uri.port)
