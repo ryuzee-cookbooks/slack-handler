@@ -17,10 +17,10 @@ Attributes
     <th>Default</th>
   </tr>
   <tr>
-    <td><tt>['slack-handler']['team']</tt></td>
+    <td><tt>['slack-handler']['slack_webhook_url']</tt></td>
     <td>String</td>
-    <td>team name that means a part of API endpoint</td>
-    <td><tt>ryuzee</tt></td>
+    <td>API endpoint</td>
+    <td><tt>https://hooks.slack.com/services/T012345678/B01234567/AbcDeFGHijKLMnOPQrstuvWX</tt></td>
   </tr>
   <tr>
     <td><tt>['slack-handler']['channel']</tt></td>
@@ -29,19 +29,13 @@ Attributes
     <td><tt>#chef</tt></td>
   </tr>
   <tr>
-    <td><tt>['slack-handler']['token']</tt></td>
-    <td>String</td>
-    <td>API Token when posting to slack</td>
-    <td><tt>null</tt></td>
-  </tr>
-  <tr>
     <td><tt>['slack-handler']['username']</tt></td>
     <td>String</td>
     <td>Username when posting to slack</td>
     <td><tt>chef</tt></td>
   </tr>
   <tr>
-    <td><tt>['slack-handler']['user_emoj']</tt></td>
+    <td><tt>['slack-handler']['user_emoji']</tt></td>
     <td>String</td>
     <td>Emoji of the user</td>
     <td><tt>:chef:</tt></td>
