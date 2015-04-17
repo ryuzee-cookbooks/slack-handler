@@ -1,0 +1,63 @@
+# chef-handler-slack-event.rb
+#
+# Author: Ryutaro YOSHIBA
+# License: MIT License
+#
+
+require 'rubygems'
+require 'chef'
+require 'chef/handler'
+require 'json'
+
+class Chef
+  class Handler
+    class SlackEvent < Chef::Handler
+      attr_accessor :icon_emoj, :channel, :username, :slack_webhook_url
+
+      def initialize(options ={})
+        @channel = options[:channel] || "#chef"
+        @username = options[:username] || "chef"
+        @icon_emoji = options[:icon_emoji] || ":chef"
+        @slack_webhook_url = options[:slack_webhook_url] || ""
+      end
+
+      def report
+        if run_status.success? then
+          Chef::Log.info("Chef Execution Success on #{node.name}")
+          #return
+        end
+        uri = URI(@slack_webhook_url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+
+        begin
+          req = Net::HTTP::Post.new("#{uri.path}?#{uri.query}")
+          req.set_form_data({:payload => create_json})
+          http.request(req).body
+        rescue Exception => e
+          Chef::Log.warn("An unhandled execption occured while posting a message to Slack #{@slack_webhook_url}: #{e}")
+        end
+      end
+
+      def create_json
+        if run_status.success? then
+          text = "Chef Execution Success on #{node.name}"
+        else
+          text = "Chef Execution Failure on #{node.name}"
+          if !run_status.exception.nil?
+            text += ":\n```"
+            text += run_status.formatted_exception.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
+            text += '```'
+          end
+        end
+        slack_payload = {
+          'channel' => @channel,
+          'username' => @username,
+          'icon_emoji' => @icon_emoji,
+          'text' => text
+        }
+        return JSON.generate(slack_payload)
+      end
+    end
+  end
+end

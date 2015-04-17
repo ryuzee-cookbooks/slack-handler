@@ -1,0 +1,9 @@
+require '/var/chef/handlers/chef-handler-slack-event'
+option = Hash.new
+option[:username] = "<%= node['slack-handler']['username'] %>"
+option[:icon_emoji] = "<%= node['slack-handler']['icon_emoji'] %>"
+option[:channel] = "<%= node['slack-handler']['channel'] %>"
+option[:slack_webhook_url] = "<%= node['slack-handler']['slack_webhook_url'] %>"
+slack_handler = Chef::Handler::SlackEvent.new(option)
+report_handlers << slack_handler
+exception_handlers << slack_handler

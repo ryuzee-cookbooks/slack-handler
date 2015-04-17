@@ -7,26 +7,41 @@
 # This software is released under the MIT License.
 # http://opensource.org/licenses/mit-license.php
 
-chef_gem "chef-handler-slack" do
-  action :upgrade
+directory '/etc/chef/client.d' do
+  owner 'root'
+  group 'root'
+  recursive true
+  mode 00755
+  action :create
 end
 
-require 'chef/handler/slack'
+template "/etc/chef/client.d/slack.rb" do
+  source "slack.rb.erb"
+  owner "root"
+  group "root"
+  mode "00644"
+end
 
-chef_handler "Chef::Handler::SlackReporting" do
-  source "chef/handler/slack"
+directory "/var/chef/handlers" do
+  owner "root"
+  group "root"
+  recursive true
+  mode 00755
+  action :create
+end
+
+template "#{node[:chef_handler][:handler_path]}/chef-handler-slack-event.rb" do
+  source "chef-handler-slack-event.rb.erb"
+  mode 0644
+end
+
+chef_handler "Chef::Handler::SlackEvent" do
+  source "#{node[:chef_handler][:handler_path]}/chef-handler-slack-event.rb"
   arguments [
-    # The name of your team registered with Slack
-    :team => node["slack-handler"]["team"],
-
-    # Your incoming webhook token
-    :token => node["slack-handler"]["token"],
-
-    # An existing channel
+    :slack_webhook_url => node["slack-handler"]["slack_webhook_url"],
+    :username => node["slack-handler"]["username"],
     :channel => node["slack-handler"]["channel"],
-
-    # Watever.
-    :icon_emoj => node["slack-handler"]["icon_emoj"],
+    :icon_emoji => node["slack-handler"]["icon_emoji"]
   ]
   action :nothing
 end.run_action(:enable)
