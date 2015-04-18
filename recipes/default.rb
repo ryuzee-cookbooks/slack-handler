@@ -12,28 +12,28 @@ directory '/etc/chef/client.d' do
   group 'root'
   recursive true
   mode 00755
-  action :create
-end
+end.run_action(:create)
 
 template "/etc/chef/client.d/slack.rb" do
   source "slack.rb.erb"
   owner "root"
   group "root"
   mode "00644"
-end
+end.run_action(:create)
 
 directory "/var/chef/handlers" do
   owner "root"
   group "root"
   recursive true
   mode 00755
-  action :create
-end
+end.run_action(:create)
 
 template "#{node[:chef_handler][:handler_path]}/chef-handler-slack-event.rb" do
   source "chef-handler-slack-event.rb.erb"
+  owner 'root'
+  group 'root'
   mode 0644
-end
+end.run_action(:create)
 
 chef_handler "Chef::Handler::SlackEvent" do
   source "#{node[:chef_handler][:handler_path]}/chef-handler-slack-event.rb"
